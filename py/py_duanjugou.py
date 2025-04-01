@@ -134,12 +134,12 @@ class Spider(Spider):
                         link = urljoin(self.siteUrl, link)
                     
                     # 使用默认图标
-                    img = "https://duanjugou.top/zb_users/theme/erx_Special/images/logo.png"
+#                    img = "https://duanjugou.top/zb_users/theme/erx_Special/images/logo.png"
                     
                     videos.append({
                         "vod_id": link.replace("https://duanjugou.top", ""),
                         "vod_name": title,
-                        "vod_pic": img,
+#                        "vod_pic": img,
                         "vod_remarks": time_text
                     })
                 except Exception as e:
@@ -213,12 +213,12 @@ class Spider(Spider):
                         link = urljoin(self.siteUrl, link)
                     
                     # 使用默认图标
-                    img = "https://duanjugou.top/zb_users/theme/erx_Special/images/logo.png"
+#                    img = "https://duanjugou.top/zb_users/theme/erx_Special/images/logo.png"
                     
                     videos.append({
                         "vod_id": link.replace("https://duanjugou.top", ""),
                         "vod_name": title,
-                        "vod_pic": img,
+#                        "vod_pic": img,
                         "vod_remarks": f"{time_text}"
                     })
                 except Exception as e:
@@ -399,7 +399,7 @@ class Spider(Spider):
             vod = {
                 'vod_id': ids[0],
                 'vod_name': title,
-                'vod_pic': 'https://duanjugou.top/zb_users/theme/erx_Special/images/logo.png',
+#                'vod_pic': 'https://duanjugou.top/zb_users/theme/erx_Special/images/logo.png',
                 'type_name': '短剧',
                 'vod_year': '',
                 'vod_area': '',
