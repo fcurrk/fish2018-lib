@@ -258,7 +258,7 @@ class Spider(Spider):
             if title_tag:
                 title = title_tag.text.strip()
                 # 去掉网站名称
-                title = title.split('-')[0].strip()
+                title = re.split(r'[-—_|]', title, 1)[0].strip()  # 包含全角破折号
             
             # 网盘分类关键字
             pan_domains = {
