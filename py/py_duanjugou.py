@@ -21,10 +21,15 @@ class Spider(Spider):
         self.siteUrl = 'https://duanjugou.top'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
         self.cateManual = {
-            "总裁": "总裁",
-            "穿越": "穿越",
-            "闪婚": "闪婚",
-            "神医": "神医"
+            "爱": "爱",
+            "婚": "婚",
+            "妻": "妻",
+            "婿": "婿",
+            "歌": "歌",
+            "娱": "娱",
+            "总": "总",
+            "穿": "穿",
+            "医": "医"
         }
     
     def getName(self):
