@@ -397,8 +397,8 @@ class Spider(Spider):
             # 清理文本
             content_text = re.sub(r'\s+', ' ', content_text)
             
-            content_text1 = f"链接: <a href='{link['url']}'>{link['url']}</a>\n{content_text}"
-
+            content_text1 = f"{link['url']}"
+#             content_text1 = f"{link['url']}\n{content_text}"
             # 限制简介长度
             description = content_text1[:500] + '...' if len(content_text1) > 500 else content_text1
             
