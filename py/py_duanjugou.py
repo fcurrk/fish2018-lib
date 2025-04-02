@@ -400,7 +400,7 @@ class Spider(Spider):
             # 限制简介长度
             description = content_text[:500] + '...' if len(content_text) > 500 else content_text
             
-            description = f"链接: {vod_play_url}\n\n{description}"
+            description = f"链接: {link['url']}\n\n{description}"
             # 如果有提取码，添加到简介中
             if pwd:
                 description = f"提取码: {pwd}\n\n{description}"
