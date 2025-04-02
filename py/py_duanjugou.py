@@ -266,7 +266,7 @@ class Spider(Spider):
             if title_tag:
                 title = title_tag.text.strip()
                 # 去掉网站名称
-                title = re.split(r'[-—_|]', title, 1)[0].strip()  # 包含全角破折号
+                title = re.split(r'[-—_]', title, 1)[0].strip()  # 包含全角破折号
             
             # 网盘分类关键字
             pan_domains = {
@@ -400,6 +400,7 @@ class Spider(Spider):
             # 限制简介长度
             description = content_text[:500] + '...' if len(content_text) > 500 else content_text
             
+            description = f"链接: {vod_play_url}\n\n{description}"
             # 如果有提取码，添加到简介中
             if pwd:
                 description = f"提取码: {pwd}\n\n{description}"
