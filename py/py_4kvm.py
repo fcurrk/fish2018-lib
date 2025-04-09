@@ -29,11 +29,11 @@ class Spider(Spider):
         
         # 分类ID映射
         self.cateManual = {
-            "首页": "",
-            "电影": "movies",
-            "电视剧": "tvshows",
-            "高分电影": "imdb",
-            "热门播放": "trending",
+            # "首页": "",
+            # "电影": "movies",
+            # "电视剧": "tvshows",
+            # "高分电影": "imdb",
+            # "热门播放": "trending",
         }
         
         # 请求头
