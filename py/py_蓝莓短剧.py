@@ -292,8 +292,6 @@ class Spider(Spider):
             }
         except Exception as e:
             print(f"搜索内容异常: {str(e)}")
-        
-        print(11111111, result)
         return result
     
     def searchContentPage(self, key, quick, pg=1):
