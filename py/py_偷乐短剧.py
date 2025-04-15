@@ -396,18 +396,17 @@ class Spider(Spider):
                 # 查找分页信息
                 # 默认值
                 total = len(videos)
-                pagecount = 5
+                pagecount = 1
                 limit = 20
                 
                 # 尝试查找分页元素
-                pagination = soup.find('ul', class_='page')
+                pagination = soup.find('section', class_='container pagination')
                 if pagination:
                     # 查找最后一页的链接
-                    last_page_links = pagination.find_all('a')
-                    for link in last_page_links:
-                        page_text = link.text.strip()
-                        if page_text.isdigit():
-                            pagecount = max(pagecount, int(page_text))
+                    last_page_link = pagination.find('a', text='尾页')
+                    if last_page_link:
+                        last_page_url = last_page_link['href']
+                        pagecount = last_page_url.split('/')[-1].split('/')[-1].split('.')[0]  # 提取数字部分
         except Exception as e:
             self.log(f"获取分类内容发生错误: {str(e)}", "ERROR")
         
