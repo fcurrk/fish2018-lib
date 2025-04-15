@@ -281,7 +281,7 @@ class Spider(Spider):
         
         # 处理页码
         if pg is None:
-            pg = 2
+            pg = 1
         else:
             pg = int(pg)
 
@@ -396,7 +396,7 @@ class Spider(Spider):
                 # 查找分页信息
                 # 默认值
                 total = len(videos)
-                pagecount = 1
+                pagecount = 10
                 limit = 20
                 
                 # 尝试查找分页元素
