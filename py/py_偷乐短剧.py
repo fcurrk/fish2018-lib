@@ -274,14 +274,14 @@ class Spider(Spider):
         result['list'] = videos
         return result
     
-    def categoryContent(self, tid, pg=10, filter, extend):
+    def categoryContent(self, tid, pg, filter, extend):
         """获取分类内容"""
         result = {}
         videos = []
         
         # 处理页码
         if pg is None:
-            pg = 1
+            pg = 2
         else:
             pg = int(pg)
 
