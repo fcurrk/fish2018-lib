@@ -403,7 +403,7 @@ class Spider(Spider):
                 pagination = soup.find('section', class_='container pagination')
                 if pagination:
                     # 查找最后一页的链接
-                    last_page_link = pagination.find('a', text='尾页 »')
+                    last_page_link = pagination.find('a', text=re.compile(r'尾页'))
                     if last_page_link:
                         last_page_url = last_page_link['href']
                         pagecount = last_page_url.split('/')[-1].split('/')[-1].split('.')[0]  # 提取数字部分
