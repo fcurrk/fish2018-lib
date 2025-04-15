@@ -396,7 +396,7 @@ class Spider(Spider):
                 # 查找分页信息
                 # 默认值
                 total = len(videos)
-                pagecount = 10
+                pagecount = 5
                 limit = 20
                 
                 # 尝试查找分页元素
