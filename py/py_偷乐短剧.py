@@ -274,7 +274,7 @@ class Spider(Spider):
         result['list'] = videos
         return result
     
-    def categoryContent(self, tid, pg, filter, extend):
+    def categoryContent(self, tid, pg=10, filter, extend):
         """获取分类内容"""
         result = {}
         videos = []
