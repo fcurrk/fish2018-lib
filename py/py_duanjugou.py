@@ -89,7 +89,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 6):
+        for page_num in range(1, 30):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
