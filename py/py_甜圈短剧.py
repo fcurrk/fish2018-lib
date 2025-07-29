@@ -48,6 +48,7 @@ class Spider(Spider):
                             {'type_id': '神豪', 'type_name': '🎬 神豪'},
                             {'type_id': '马甲', 'type_name': '🎬 马甲'},
                             {'type_id': '都市日常', 'type_name': '🎬 都市日常'},
+                            {'type_id': '都市情感', 'type_name': '🎬 都市情感'},
                             {'type_id': '战神归来', 'type_name': '🎬 战神归来'},
                             {'type_id': '小人物', 'type_name': '🎬 小人物'},
                             {'type_id': '女性成长', 'type_name': '🎬 女性成长'},
