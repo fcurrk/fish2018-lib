@@ -89,7 +89,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 15):
+        for page_num in range(1, 10):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
@@ -455,15 +455,15 @@ class Spider(Spider):
         # 资源回收
         pass 
 
-if __name__ == '__main__':
-    spider = Spider()
+#if __name__ == '__main__':
+#    spider = Spider()
     
     # 测试首页视频列表
-    print("=== 测试 homeVideoContent ===")
-    result = spider.homeVideoContent()
-    print(f"获取到 {len(result['list'])} 个视频")
-    for v in result['list'][:5]:  # 打印前5条
-        print(v)
+#    print("=== 测试 homeVideoContent ===")
+#    result = spider.homeVideoContent()
+#    print(f"获取到 {len(result['list'])} 个视频")
+#    for v in result['list'][:5]:  # 打印前5条
+#        print(v)
     
     # 可选：测试分类搜索
     # print("\n=== 测试 categoryContent (分类: 爱) ===")
