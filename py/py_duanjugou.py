@@ -18,7 +18,7 @@ except ImportError:
 
 class Spider(Spider):
     def __init__(self):
-        self.siteUrl = 'https://duanjugou.top'
+        self.siteUrl = 'http://duanjugou.top'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
         self.cateManual = {
             "爱": "爱",
