@@ -48,7 +48,7 @@ class Spider(Spider):
             }
         
         try:
-            response = requests.get(url, headers=headers, timeout=60, allow_redirects=True)
+            response = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
             response.raise_for_status()
             return response
         except Exception as e:
@@ -88,7 +88,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 2):
+        for page_num in range(1, 10):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
