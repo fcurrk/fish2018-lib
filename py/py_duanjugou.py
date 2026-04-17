@@ -49,7 +49,7 @@ class Spider(Spider):
             }
         
         try:
-            response = requests.get(url, headers=headers, timeout=60, allow_redirects=True)
+            response = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
             response.raise_for_status()
             return response
         except Exception as e:
