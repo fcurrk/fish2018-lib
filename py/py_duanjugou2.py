@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# 短剧狗爬虫 - 全网免费短剧网盘合集
 
 import sys
 import requests
@@ -18,7 +18,7 @@ except ImportError:
 
 class Spider(Spider):
     def __init__(self):
-        self.siteUrl = 'https://duanjugou.top'
+        self.siteUrl = 'https://dj.fufulili.com'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
         self.cateManual = {
             "爱": "爱",
@@ -89,7 +89,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 2):
+        for page_num in range(1, 3):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
@@ -106,22 +106,27 @@ class Spider(Spider):
                 soup = BeautifulSoup(response.text, 'html.parser')
                 
                 # 定位内容容器（与原有逻辑保持一致）
-                list_container = soup.find('div', class_='post-list')
+                list_container = soup.find('div', class_='erx-list-box')
                 if not list_container:
                     print(f"第 {page_num} 页未找到内容容器")
                     continue
                     
+                item_list = list_container.find('ul', class_='erx-list')
+                if not item_list:
+                    print(f"第 {page_num} 页无列表项")
+                    continue
+                
                 # 提取视频条目
-                items = list_container.find_all('article', class_='post-item-row')
+                items = item_list.find_all('li', class_='item')
                 print(f"第 {page_num} 页发现 {len(items)} 个条目")
                 
                 for item in items:
                     try:
                         # 标题和链接
-                        a_div = item.find('h2', class_='post-title')
+                        a_div = item.find('div', class_='a')
                         if not a_div:
                             continue
-                        link_tag = a_div.find('a')
+                        link_tag = a_div.find('a', class_='main')
                         if not link_tag:
                             continue
                         
@@ -131,9 +136,11 @@ class Spider(Spider):
                         
                         # 发布时间
                         time_text = ""
-                        i_div = item.select_one('span.post-date')
+                        i_div = item.find('div', class_='i')
                         if i_div:
-                            time_text = i_div.text.strip()
+                            time_tag = i_div.find('span', class_='time')
+                            if time_tag:
+                                time_text = time_tag.text.strip()
                         
                         # 构建条目（移除默认图标以使用网站数据）
                         videos.append({
