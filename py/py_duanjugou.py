@@ -89,7 +89,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 15):
+        for page_num in range(1, 5):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
@@ -106,27 +106,27 @@ class Spider(Spider):
                 soup = BeautifulSoup(response.text, 'html.parser')
                 
                 # 定位内容容器（与原有逻辑保持一致）
-                list_container = soup.find('div', class_='erx-list-box')
+                list_container = soup.find('div', class_='post-list')
                 if not list_container:
                     print(f"第 {page_num} 页未找到内容容器")
                     continue
                     
-                item_list = list_container.find('ul', class_='erx-list')
+                item_list = list_container.find('article', class_='post-item-row')
                 if not item_list:
                     print(f"第 {page_num} 页无列表项")
                     continue
                 
                 # 提取视频条目
-                items = item_list.find_all('li', class_='item')
+                items = item_list.find_all('article', class_='post-item-row')
                 print(f"第 {page_num} 页发现 {len(items)} 个条目")
                 
                 for item in items:
                     try:
                         # 标题和链接
-                        a_div = item.find('div', class_='a')
+                        a_div = item.find('h2', class_='post-title')
                         if not a_div:
                             continue
-                        link_tag = a_div.find('a', class_='main')
+                        link_tag = a_div.find('a', class_='')
                         if not link_tag:
                             continue
                         
@@ -136,11 +136,9 @@ class Spider(Spider):
                         
                         # 发布时间
                         time_text = ""
-                        i_div = item.find('div', class_='i')
+                        i_div = item.find('span', class_='post-date')
                         if i_div:
-                            time_tag = i_div.find('span', class_='time')
-                            if time_tag:
-                                time_text = time_tag.text.strip()
+                            time_text = i_div.text.strip()
                         
                         # 构建条目（移除默认图标以使用网站数据）
                         videos.append({
