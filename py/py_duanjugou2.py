@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 短剧狗爬虫 - 全网免费短剧网盘合集
+
 
 import sys
 import requests
@@ -18,7 +18,7 @@ except ImportError:
 
 class Spider(Spider):
     def __init__(self):
-        self.siteUrl = 'https://dj.fufulili.com'
+        self.siteUrl = 'https://duanjugou.top'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
         self.cateManual = {
             "爱": "爱",
@@ -89,7 +89,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 3):
+        for page_num in range(1, 5):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
@@ -106,27 +106,22 @@ class Spider(Spider):
                 soup = BeautifulSoup(response.text, 'html.parser')
                 
                 # 定位内容容器（与原有逻辑保持一致）
-                list_container = soup.find('div', class_='erx-list-box')
+                list_container = soup.find('div', class_='post-list')
                 if not list_container:
                     print(f"第 {page_num} 页未找到内容容器")
                     continue
                     
-                item_list = list_container.find('ul', class_='erx-list')
-                if not item_list:
-                    print(f"第 {page_num} 页无列表项")
-                    continue
-                
                 # 提取视频条目
-                items = item_list.find_all('li', class_='item')
+                items = list_container.find_all('article', class_='post-item-row')
                 print(f"第 {page_num} 页发现 {len(items)} 个条目")
                 
                 for item in items:
                     try:
                         # 标题和链接
-                        a_div = item.find('div', class_='a')
+                        a_div = item.find('h2', class_='post-title')
                         if not a_div:
                             continue
-                        link_tag = a_div.find('a', class_='main')
+                        link_tag = a_div.find('a')
                         if not link_tag:
                             continue
                         
@@ -136,11 +131,9 @@ class Spider(Spider):
                         
                         # 发布时间
                         time_text = ""
-                        i_div = item.find('div', class_='i')
+                        i_div = item.select_one('span.post-date')
                         if i_div:
-                            time_tag = i_div.find('span', class_='time')
-                            if time_tag:
-                                time_text = time_tag.text.strip()
+                            time_text = i_div.text.strip()
                         
                         # 构建条目（移除默认图标以使用网站数据）
                         videos.append({
@@ -180,42 +173,41 @@ class Spider(Spider):
             soup = BeautifulSoup(html_content, 'html.parser')
             
             # 根据网站实际结构，找到首页内容区域
-            main_list_section = soup.find('div', class_='erx-list-box')
+            main_list_section = soup.find('div', class_='post-list')
             if not main_list_section:
-                print(f"未找到erx-list-box容器")
+                print(f"未找到post-list容器")
                 return {'list': []}
                 
-            item_list = main_list_section.find('ul', class_='erx-list')
+            item_list = main_list_section.find_all('article', class_='post-item-row')
             if not item_list:
-                print(f"未找到erx-list列表")
+                print(f"未找到article列表")
                 return {'list': []}
             
             videos = []
             
-            items = item_list.find_all('li', class_='item')
+            items = main_list_section.find_all('article', class_='post-item-row')
             
             for item in items:
                 try:
                     # 获取标题区域
-                    a_div = item.find('div', class_='a')
+                    a_div = item.find('h2', class_='post-title')
                     if not a_div:
                         continue
-                    
+
                     # 提取链接和标题
-                    link_elem = a_div.find('a', class_='main')
+                    link_elem = a_div.find('a')
                     if not link_elem:
                         continue
                     
-                    title = link_elem.text.strip()
+                    title = a_div.text.strip()
                     link = link_elem.get('href')
                     
                     # 提取时间
-                    i_div = item.find('div', class_='i')
                     time_text = ""
+                    i_div = item.select_one('span.post-date')
                     if i_div:
-                        time_span = i_div.find('span', class_='time')
-                        if time_span:
-                            time_text = time_span.text.strip()
+                        time_text = i_div.text.strip()
+                        time_text = time_span.text.strip()
                     
                     if not link.startswith('http'):
                         link = urljoin(self.siteUrl, link)
@@ -454,18 +446,3 @@ class Spider(Spider):
     def destroy(self):
         # 资源回收
         pass 
-
-if __name__ == '__main__':
-    spider = Spider()
-    
-    # 测试首页视频列表
-    print("=== 测试 homeVideoContent ===")
-    result = spider.homeVideoContent()
-    print(f"获取到 {len(result['list'])} 个视频")
-    for v in result['list'][:5]:  # 打印前5条
-        print(v)
-    
-    # 可选：测试分类搜索
-    # print("\n=== 测试 categoryContent (分类: 爱) ===")
-    # cat_result = spider.categoryContent(tid="爱", pg=1, filter=None, extend=None)
-    # print(cat_result)
