@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import sys
 import requests
 from urllib.parse import urljoin, quote_plus
@@ -89,7 +88,7 @@ class Spider(Spider):
         videos = []
         
         # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 5):
+        for page_num in range(1, 9):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
@@ -206,8 +205,7 @@ class Spider(Spider):
                     time_text = ""
                     i_div = item.select_one('span.post-date')
                     if i_div:
-                        time_text = i_div.text.strip()
-                        time_text = time_span.text.strip()
+                        time_text = i_div.text.strip()   # FIXED: 原为 time_span.text.strip()
                     
                     if not link.startswith('http'):
                         link = urljoin(self.siteUrl, link)
@@ -233,7 +231,9 @@ class Spider(Spider):
 
     
     def detailContent(self, ids):
-        # 解析详情页面URL
+        # MODIFIED: 如果 ids 是字符串，转为列表（兼容测试代码传入字符串）
+        if isinstance(ids, str):
+            ids = [ids]
         url = ids[0]
         if not url.startswith('http'):
             url = urljoin(self.siteUrl, url)
@@ -247,9 +247,9 @@ class Spider(Spider):
             soup = BeautifulSoup(html_content, 'html.parser')
             
             # 查找页面主体内容 - 使用erx-wrap类而不是article
-            main_content = soup.find('div', class_='erx-wrap')
+            main_content = soup.find('div', class_='main-wrapper')
             if not main_content:
-                print(f'无法找到erx-wrap容器')
+                print(f'无法找到main-wrapper容器')
                 return {}
             
             # 尝试找到标题 - 从页面标题获取
@@ -384,19 +384,27 @@ class Spider(Spider):
                     play_urls.append(f"{link['name']}${link['url']}")
                 vod_play_url.append('#'.join(play_urls))
             
-            # 提取简介 - 使用整个内容区域
-            content_text = main_content.text.strip()
-            # 清理文本
-            content_text = re.sub(r'\s+', ' ', content_text)
-            
-            content_text1 = f"{link['url']}"
-#             content_text1 = f"{link['url']}\n{content_text}"
-            # 限制简介长度
-            description = content_text1[:500] + '...' if len(content_text1) > 500 else content_text1
-            
-            # 如果有提取码，添加到简介中
+            # ========== MODIFIED: 重写简介构建逻辑，消除 link['url'] 错误 ==========
+            description_parts = []
+            if pan_links:
+                description_parts.append("【网盘链接】")
+                for link in pan_links:
+                    description_parts.append(f"{link['name']}: {link['url']}")
+            if download_links:
+                description_parts.append("【下载链接】")
+                for link in download_links:
+                    description_parts.append(f"{link['name']}: {link['url']}")
             if pwd:
-                description = f"提取码: {pwd}\n\n{description}"
+                description_parts.append(f"提取码: {pwd}")
+
+            if description_parts:
+                description = "\n".join(description_parts)
+            else:
+                # 如果没有找到任何链接，则从页面内容截取
+                content_text = main_content.text.strip()
+                content_text = re.sub(r'\s+', ' ', content_text)
+                description = content_text[:500] + '...' if len(content_text) > 500 else content_text
+            # ========== MODIFIED END ==========
             
             vod = {
                 'vod_id': ids[0],
@@ -446,3 +454,23 @@ class Spider(Spider):
     def destroy(self):
         # 资源回收
         pass 
+
+#if __name__ == '__main__':
+#    spider = Spider()
+    
+    # 测试首页视频列表
+#    print("=== 测试 homeVideoContent ===")
+#    result = spider.homeVideoContent()
+#    print(f"获取到 {len(result['list'])} 个视频")
+#    for v in result['list'][:5]:  # 打印前5条
+#        print(v)
+    
+    # 可选：测试分类搜索
+    # print("\n=== 测试 categoryContent (分类: 爱) ===")
+    # cat_result = spider.categoryContent(tid="爱", pg=1, filter=None, extend=None)
+    # print(cat_result)
+
+    # MODIFIED: 测试详情页时传入列表而非字符串
+    # print("\n=== 测试 detailContent (ids: 55398) ===")
+    # detail_result = spider.detailContent(ids=["/55398.html"])
+    # print(detail_result)
