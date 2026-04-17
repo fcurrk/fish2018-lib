@@ -126,7 +126,7 @@ class Spider(Spider):
                         a_div = item.find('h2', class_='post-title')
                         if not a_div:
                             continue
-                        link_tag = a_div.find('a', class_='')
+                        link_tag = a_div.find('a')
                         if not link_tag:
                             continue
                         
@@ -136,7 +136,7 @@ class Spider(Spider):
                         
                         # 发布时间
                         time_text = ""
-                        i_div = item.find('span', class_='post-date')
+                        i_div = item.select_one('span.post-date')
                         if i_div:
                             time_text = i_div.text.strip()
                         
