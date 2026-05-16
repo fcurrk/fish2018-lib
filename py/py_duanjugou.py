@@ -455,16 +455,16 @@ class Spider(Spider):
         # 资源回收
         pass 
 
-if __name__ == '__main__':
-    spider = Spider()
+#if __name__ == '__main__':
+#    spider = Spider()
     
     # 测试首页视频列表
-    print("=== 测试 homeVideoContent ===")
-    result = spider.homeVideoContent()
-    print(f"获取到 {len(result['list'])} 个视频")
-    print(result)
-    for v in result['list'][:5]:  # 打印前5条
-        print(v)
+#    print("=== 测试 homeVideoContent ===")
+#    result = spider.homeVideoContent()
+#    print(f"获取到 {len(result['list'])} 个视频")
+#    print(result)
+#    for v in result['list'][:5]:  # 打印前5条
+#        print(v)
     
     # 可选：测试分类搜索
 #    print("\n=== 测试 categoryContent (分类: 爱) ===")
