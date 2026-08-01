@@ -574,17 +574,17 @@ class Spider(Spider):
             vod_play_url = []
             
             if pan_links:
-                vod_play_from.append('夸克|阿里|UC|迅雷|百度|天翼|移动|115|PikPak|123')
+                vod_play_from.append('网盘链接')
                 play_urls = []
                 for i, link in enumerate(pan_links):
-                    play_urls.append(f"第{i+1}集${link['url']}")
+                    play_urls.append(f"{link['name']}${link['url']}")
                 vod_play_url.append('#'.join(play_urls))
-
+            
             if download_links:
-                vod_play_from.append('磁力|下载')
+                vod_play_from.append('下载链接')
                 play_urls = []
                 for i, link in enumerate(download_links):
-                    play_urls.append(f"第{i+1}集${link['url']}")
+                    play_urls.append(f"{link['name']}${link['url']}")
                 vod_play_url.append('#'.join(play_urls))
             
             description_parts = []
@@ -638,32 +638,13 @@ class Spider(Spider):
         return self.searchContent(key, quick, pg)
     
     def playerContent(self, flag, id, vipFlags):
-        result = {
-            "parse": 1,
+        return {
+            "parse": 0,
             "url": id,
             "header": {
                 "User-Agent": self.userAgent
             }
         }
-        # 网盘链接标识，让OK影视用对应网盘解析器处理
-        pan_domains = {
-            "quark": ["pan.quark.cn"],
-            "ali": ["alipan.com", "aliyundrive.com"],
-            "uc": ["drive.uc.cn"],
-            "xunlei": ["pan.xunlei.com"],
-            "baidu": ["pan.baidu.com"],
-            "tianyi": ["cloud.189.cn"],
-            "yidong": ["caiyun.139.com"],
-            "115": ["115cdn.com", "115.com", "anxia.com"],
-            "pikpak": ["mypikpak.com"],
-            "123": ["123684.com", "123685.com", "123912.com", "123pan.com", "123pan.cn", "123592.com"],
-        }
-        for pan_type, domains in pan_domains.items():
-            if any(d in id for d in domains):
-                result["parse"] = 0
-                result["flag"] = pan_type
-                break
-        return result
     
     def localProxy(self, param):
         return None
