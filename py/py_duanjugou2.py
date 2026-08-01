@@ -21,15 +21,7 @@ class Spider(Spider):
         self.siteUrl = 'https://duanjugou.top'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
         self.cateManual = {
-            "爱": "爱",
-            "婚": "婚",
-            "妻": "妻",
-            "婿": "婿",
-            "歌": "歌",
-            "娱": "娱",
-            "总": "总",
-            "穿": "穿",
-            "医": "医"
+            "首页": "__home__"
         }
         self.session = None
         self.verified = False
@@ -269,7 +261,7 @@ class Spider(Spider):
 
         result['class'] = classes
 
-        # 获取首页推荐视频（只读第1页，后续由APK翻页逐页加载）
+        # 首页只获取第1页，后续翻页由categoryContent逐页加载
         try:
             result['list'] = self.homeVideoContent()['list']
         except Exception as e:
@@ -285,7 +277,7 @@ class Spider(Spider):
     def homeVideoContent(self):
         videos = []
         
-        # 只读首页，后续翻页由APK自动调用翻页接口逐页加载
+        # 只读首页，后续翻页由APK自动调用categoryContent逐页加载
         for page_num in range(1, 2):
             if page_num == 1:
                 page_url = self.siteUrl
@@ -344,7 +336,60 @@ class Spider(Spider):
         return {'list': videos}
     
     def categoryContent(self, tid, pg, filter, extend):
-        result = self.switch(tid, pg)
+        result = {}
+        videos = []
+        pg = int(pg)
+
+        if tid == '__home__':
+            # 首页翻页：加载 /page_{pg}.html
+            if pg == 1:
+                page_url = self.siteUrl
+            else:
+                page_url = f"{self.siteUrl}/page_{pg}.html"
+
+            try:
+                print(f"首页翻页 第{pg}页: {page_url}")
+                response = self.fetch(page_url)
+                if response:
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    list_container = soup.find('div', class_='post-list')
+                    if list_container:
+                        items = list_container.find_all('article', class_='post-item-row')
+                        for item in items:
+                            try:
+                                a_div = item.find('h2', class_='post-title')
+                                if not a_div:
+                                    continue
+                                link_tag = a_div.find('a')
+                                if not link_tag:
+                                    continue
+                                title = link_tag.text.strip()
+                                relative_link = link_tag['href']
+                                full_link = urljoin(self.siteUrl, relative_link)
+                                time_text = ""
+                                i_div = item.select_one('span.post-date')
+                                if i_div:
+                                    time_text = i_div.text.strip()
+                                videos.append({
+                                    "vod_id": full_link.replace(self.siteUrl, ""),
+                                    "vod_name": title,
+                                    "vod_remarks": time_text
+                                })
+                            except Exception as e:
+                                print(f"处理条目时出错：{str(e)}")
+                                continue
+            except Exception as e:
+                print(f"首页翻页异常: {str(e)}")
+        else:
+            # 搜索翻页
+            result = self.switch(tid, pg)
+            result['page'] = pg
+            result['pagecount'] = 9999
+            result['limit'] = 90
+            result['total'] = 999999
+            return result
+
+        result['list'] = videos
         result['page'] = pg
         result['pagecount'] = 9999
         result['limit'] = 90
