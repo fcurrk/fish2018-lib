@@ -21,7 +21,7 @@ class Spider(Spider):
         self.siteUrl = 'https://duanjugou.top'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
         self.cateManual = {
-            "首页": "__home__"
+            "全部": "__home__"
         }
         self.session = None
         self.verified = False
