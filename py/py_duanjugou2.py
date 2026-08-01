@@ -258,7 +258,7 @@ class Spider(Spider):
     
     def homeContent(self, filter):
         result = {}
-        
+
         # 构建分类列表
         classes = []
         for k in self.cateManual:
@@ -266,23 +266,27 @@ class Spider(Spider):
                 'type_id': self.cateManual[k],
                 'type_name': k
             })
-        
+
         result['class'] = classes
-        
-        # 获取首页推荐视频
+
+        # 获取首页推荐视频（只读第1页，后续由APK翻页逐页加载）
         try:
             result['list'] = self.homeVideoContent()['list']
         except Exception as e:
             print(f"获取首页内容失败: {str(e)}")
             result['list'] = []
-        
+
+        result['page'] = 1
+        result['pagecount'] = 9999
+        result['limit'] = 90
+        result['total'] = 999999
         return result
     
     def homeVideoContent(self):
         videos = []
         
-        # 遍历前5页
-        for page_num in range(1, 20):
+        # 只读首页，后续翻页由APK自动调用翻页接口逐页加载
+        for page_num in range(1, 2):
             if page_num == 1:
                 page_url = self.siteUrl
             else:
