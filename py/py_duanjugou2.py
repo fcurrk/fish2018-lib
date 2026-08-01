@@ -573,34 +573,18 @@ class Spider(Spider):
             vod_play_from = []
             vod_play_url = []
             
-            # 按网盘类型分组，同类型合并到一个播放源
-            pan_by_type = {}
-            for link in pan_links:
-                pan_type = '其他网盘'
-                for pan_name, domains in pan_domains.items():
-                    if any(d in link['url'] for d in domains):
-                        pan_type = pan_name
-                        break
-                if pan_type not in pan_by_type:
-                    pan_by_type[pan_type] = []
-                pan_by_type[pan_type].append(link)
-
-            for pan_type, links in pan_by_type.items():
-                vod_play_from.append(pan_type)
+            if pan_links:
+                vod_play_from.append('夸克|阿里|UC|迅雷|百度|天翼|移动|115|PikPak|123')
                 play_urls = []
-                for i, link in enumerate(links):
-                    # 从标题提取集数信息
-                    ep_match = re.search(r'(\d+)集', title)
-                    ep_count = ep_match.group(1) if ep_match else ''
-                    ep_name = f"共{ep_count}集" if ep_count else link['name']
-                    play_urls.append(f"{ep_name}${link['url']}")
+                for i, link in enumerate(pan_links):
+                    play_urls.append(f"第{i+1}集${link['url']}")
                 vod_play_url.append('#'.join(play_urls))
 
             if download_links:
-                vod_play_from.append('磁力链接')
+                vod_play_from.append('磁力|下载')
                 play_urls = []
                 for i, link in enumerate(download_links):
-                    play_urls.append(f"{link['name']}${link['url']}")
+                    play_urls.append(f"第{i+1}集${link['url']}")
                 vod_play_url.append('#'.join(play_urls))
             
             description_parts = []
