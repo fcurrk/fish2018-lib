@@ -21,15 +21,7 @@ class Spider(Spider):
         self.siteUrl = 'https://dj.fufulili.com'
         self.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
         self.cateManual = {
-            "爱": "爱",
-            "婚": "婚",
-            "妻": "妻",
-            "婿": "婿",
-            "歌": "歌",
-            "娱": "娱",
-            "总": "总",
-            "穿": "穿",
-            "医": "医"
+            "全部": "__home__"
         }
     
     def getName(self):
@@ -66,7 +58,7 @@ class Spider(Spider):
     
     def homeContent(self, filter):
         result = {}
-        
+
         # 构建分类列表
         classes = []
         for k in self.cateManual:
@@ -74,22 +66,26 @@ class Spider(Spider):
                 'type_id': self.cateManual[k],
                 'type_name': k
             })
-        
+
         result['class'] = classes
-        
-        # 获取首页推荐视频
+
+        # 首页只获取第1页，后续翻页由categoryContent逐页加载
         try:
             result['list'] = self.homeVideoContent()['list']
         except:
             result['list'] = []
-        
+
+        result['page'] = 1
+        result['pagecount'] = 9999
+        result['limit'] = 90
+        result['total'] = 999999
         return result
     
     def homeVideoContent(self):
         videos = []
-        
-        # 遍历前5页（页码通常从1开始）
-        for page_num in range(1, 10):
+
+        # 只读首页，后续翻页由APK自动调用categoryContent逐页加载
+        for page_num in range(1, 2):
             # 构造分页URL（第一页可能无需参数）
             if page_num == 1:
                 page_url = self.siteUrl  # 首页无参数
@@ -161,7 +157,64 @@ class Spider(Spider):
         return {'list': videos}
     
     def categoryContent(self, tid, pg, filter, extend):
-        result = self.switch(tid, pg)
+        result = {}
+        videos = []
+        pg = int(pg)
+
+        if tid == '__home__':
+            # 首页翻页：加载 /page_{pg}.html
+            if pg == 1:
+                page_url = self.siteUrl
+            else:
+                page_url = f"{self.siteUrl}/page_{pg}.html"
+
+            try:
+                print(f"首页翻页 第{pg}页: {page_url}")
+                response = self.fetch(page_url)
+                if response:
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    list_container = soup.find('div', class_='erx-list-box')
+                    if list_container:
+                        item_list = list_container.find('ul', class_='erx-list')
+                        if item_list:
+                            items = item_list.find_all('li', class_='item')
+                            for item in items:
+                                try:
+                                    a_div = item.find('div', class_='a')
+                                    if not a_div:
+                                        continue
+                                    link_tag = a_div.find('a', class_='main')
+                                    if not link_tag:
+                                        continue
+                                    title = link_tag.text.strip()
+                                    relative_link = link_tag['href']
+                                    full_link = urljoin(self.siteUrl, relative_link)
+                                    time_text = ""
+                                    i_div = item.find('div', class_='i')
+                                    if i_div:
+                                        time_tag = i_div.find('span', class_='time')
+                                        if time_tag:
+                                            time_text = time_tag.text.strip()
+                                    videos.append({
+                                        "vod_id": full_link.replace(self.siteUrl, ""),
+                                        "vod_name": title,
+                                        "vod_remarks": time_text
+                                    })
+                                except Exception as e:
+                                    print(f"处理条目时出错：{str(e)}")
+                                    continue
+            except Exception as e:
+                print(f"首页翻页异常: {str(e)}")
+        else:
+            # 搜索翻页
+            result = self.switch(tid, pg)
+            result['page'] = pg
+            result['pagecount'] = 9999
+            result['limit'] = 90
+            result['total'] = 999999
+            return result
+
+        result['list'] = videos
         result['page'] = pg
         result['pagecount'] = 9999
         result['limit'] = 90
